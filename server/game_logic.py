@@ -7,8 +7,6 @@ from pygame import Vector2, Rect
 from config import (
     SCREEN_WIDTH,
     SCREEN_HEIGHT,
-    BALL_DEFAULT_DX,
-    BALL_DEFAULT_DY,
     PLAYER_SPEED,
     PLAYER_1,
     PLAYER_2,
@@ -65,11 +63,11 @@ class Game:
         player_1 = self.state.player_1
         player_2 = self.state.player_2
 
-        # Check for collision with the top and bottom walls (screen boundaries)
+        # Collision with top and bottom walls
         if ball.position.y - BALL_RADIUS <= 0 or ball.position.y + BALL_RADIUS >= SCREEN_HEIGHT:
-            ball.velocity.y = -ball.velocity.y  # Reverse vertical direction
+            ball.velocity.y = -ball.velocity.y
 
-        # Check for collision with player 1 paddle (left side)
+        # Collision with player 1
         player_1_rect = Rect(PLAYER_1_X, player_1.y, PLAYER_WIDTH, PLAYER_HEIGHT)
         ball_rect = Rect(ball.position.x - BALL_RADIUS, ball.position.y - BALL_RADIUS, BALL_RADIUS * 2, BALL_RADIUS * 2)
 
@@ -77,14 +75,14 @@ class Game:
             ball.velocity.x = abs(ball.velocity.x)
             ball.velocity.y += (ball.position.y - (player_1.y + PLAYER_HEIGHT // 2)) * 0.1
 
-        # Check for collision with player 2 paddle (right side)
+        # Collision with player 2
         player_2_rect = Rect(PLAYER_2_X - PLAYER_WIDTH, player_2.y, PLAYER_WIDTH, PLAYER_HEIGHT)
 
         if player_2_rect.colliderect(ball_rect):
             ball.velocity.x = -abs(ball.velocity.x)
             ball.velocity.y += (ball.position.y - (player_2.y + PLAYER_HEIGHT // 2)) * 0.1
 
-        # 4. Check if the ball goes out of bounds (left or right side)
+        # Check if ball goes out of bounds
         if ball.position.x - BALL_RADIUS <= 0:
             print("Player 2 scores!")
             self.reset_ball()
@@ -112,6 +110,4 @@ class Game:
                 self.state.player_2.y = max(0, min(SCREEN_HEIGHT - PLAYER_HEIGHT, self.state.player_2.y + move * PLAYER_SPEED))
 
             self.update_ball()
-        
-        return self.state
 

@@ -24,8 +24,6 @@ DOWN = 1
 # Ball configurations
 BALL_RADIUS = 10
 BALL_SPEED = 3
-BALL_DEFAULT_DX = 3
-BALL_DEFAULT_DY = 0
 
 # Colors
 WHITE = (255, 255, 255)
