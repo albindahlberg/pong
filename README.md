@@ -21,3 +21,10 @@ uvicorn server.main:app --host 0.0.0.0 --port 8765
 ```
 python .\client\main.py
 ```
+
+
+## PYTHONPATH in powershell
+```
+$env:PYTHONPATH = (Get-Location).Path
+$env:PYTHONPATH="C:\Users\albin\Documents\GitHub\pong\server;$env:PYTHONPATH"
+```

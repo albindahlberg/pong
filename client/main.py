@@ -16,23 +16,30 @@ from config import (
     DOWN,
     NOTHING,
     BALL_RADIUS,
-    BLACK, WHITE, RED
+    BLACK,
+    WHITE,
+    RED,
 )
 
 
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
-def draw_paddle(x,y):
-    pygame.draw.rect(
-        screen, WHITE, pygame.Rect(x, y, PLAYER_WIDTH, PLAYER_HEIGHT)
-    )
+
+def draw_paddle(x, y):
+    pygame.draw.rect(screen, WHITE, pygame.Rect(x, y, PLAYER_WIDTH, PLAYER_HEIGHT))
+
 
 def draw_ball(x, y):
     pygame.draw.circle(screen, RED, (x, y), BALL_RADIUS)
 
 
-def render(player1_y, player2_y, ball_x, ball_y):
+def render(game_data):
+    ball_x = game_data.get("ball_x")
+    ball_y = game_data.get("ball_y")
+    player1_y = game_data.get("player_1", PLAYER_DEFAULT_Y)
+    player2_y = game_data.get("player_2", PLAYER_DEFAULT_Y)
+
     # Render new state
     screen.fill(BLACK)
     draw_paddle(PLAYER_1_X, player1_y)
@@ -64,12 +71,8 @@ async def receive_game_state(websocket):
         # Receive game state
         game_state = await websocket.recv()
         game_data = eval(json.loads(game_state))
-        ball_x = game_data.get("ball_x")
-        ball_y = game_data.get("ball_y")
-        player1_y = game_data.get("player_1", PLAYER_DEFAULT_Y)
-        player2_y = game_data.get("player_2", PLAYER_DEFAULT_Y)
         # Render
-        render(player1_y, player2_y, ball_x, ball_y)
+        render(game_data)
 
 
 async def main():
