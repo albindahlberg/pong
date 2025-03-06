@@ -1,7 +1,8 @@
+import asyncio
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from connection import ConnectionManager
 from game_logic import Game
-from config import NOTHING, NUM_PLAYERS
+from config import NOTHING, NUM_PLAYERS, FPS
 
 app = FastAPI()
 manager = ConnectionManager()

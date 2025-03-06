@@ -27,7 +27,7 @@ class Player:
 
 @dataclass
 class Ball:
-    angle = math.radians(random.randint(0, 360))
+    angle = math.radians(random.randint(0, 360))    
     position = Vector2(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
     velocity = BALL_SPEED * Vector2(math.cos(angle), math.sin(angle))
 
@@ -37,8 +37,11 @@ class GameState:
     """Class for full game state"""
 
     ball: Ball = Ball()
-    player_1: Player = Player(x=PLAYER_1_X, y=SCREEN_HEIGHT // 2)
-    player_2: Player = Player(x=PLAYER_2_X, y=SCREEN_HEIGHT // 2)
+    player_1: Player = Player(x=PLAYER_1_X, y=SCREEN_HEIGHT // 2 - PLAYER_HEIGHT // 2)
+    player_2: Player = Player(x=PLAYER_2_X, y=SCREEN_HEIGHT // 2 - PLAYER_HEIGHT // 2)
+
+    def reset_ball(self):
+        self.ball = Ball()
 
 
 class Game:
@@ -80,7 +83,7 @@ class Game:
         ):
             ball.velocity.y = -ball.velocity.y
 
-        # Ball rect for collisions
+        # Ball hitbox for collisions
         ball_rect = Rect(
             ball.position.x - BALL_RADIUS,
             ball.position.y - BALL_RADIUS,
@@ -91,20 +94,14 @@ class Game:
         # Collision with player 1
         player_1_rect = Rect(PLAYER_1_X, player_1.y, PLAYER_WIDTH, PLAYER_HEIGHT)
         if player_1_rect.colliderect(ball_rect):
-            ball.velocity.x = abs(ball.velocity.x)
-            ball.velocity.y += (
-                ball.position.y - (player_1.y + PLAYER_HEIGHT // 2)
-            ) * 0.1
+            ball.velocity.x = ball.velocity.x
 
         # Collision with player 2
         player_2_rect = Rect(
             PLAYER_2_X - PLAYER_WIDTH, player_2.y, PLAYER_WIDTH, PLAYER_HEIGHT
         )
         if player_2_rect.colliderect(ball_rect):
-            ball.velocity.x = -abs(ball.velocity.x)
-            ball.velocity.y += (
-                ball.position.y - (player_2.y + PLAYER_HEIGHT // 2)
-            ) * 0.1
+            ball.velocity.x = -ball.velocity.x
 
         # Check if ball goes out of bounds
         if ball.position.x - BALL_RADIUS <= 0:
@@ -115,7 +112,7 @@ class Game:
             print("Player 1 scores!")
             self.reset_ball()
 
-        # 5. Normalize ball velocity and update ball position
+        # Normalize ball velocity
         if ball.velocity.length() != 0:
             ball.velocity = ball.velocity.normalize() * BALL_SPEED
 
@@ -132,6 +129,8 @@ class Game:
     def update_state(self, player_id, move):
         """Update the game state if currently running"""
         if self.running:
+            self.update_ball()
+            
             if player_id == PLAYER_1:
                 self.state.player_1.y = max(
                     0,
@@ -148,5 +147,3 @@ class Game:
                         self.state.player_2.y + move * PLAYER_SPEED,
                     ),
                 )
-
-            self.update_ball()
